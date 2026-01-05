@@ -1,4 +1,4 @@
-# 🎨 Yeatee POD - Print-on-Demand T-Shirt Marketplace
+#  Yeatee POD - Print-on-Demand T-Shirt Marketplace
 
 A comprehensive print-on-demand (POD) t-shirt marketplace built with Next.js 16, featuring role-based UI, creator dashboards, design studio, and automated vendor/printer selection.
 
@@ -8,39 +8,39 @@ A comprehensive print-on-demand (POD) t-shirt marketplace built with Next.js 16,
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.0-blue)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue)
 
-## 🌟 Features
+##  Features
 
-### 👥 **Role-Based Experience**
+###  **Role-Based Experience**
 - **Creator Mode**: Showcase brand store, manage products, access analytics
 - **Customer Mode**: Browse marketplace, shop products, manage orders
 - Seamless role switching with persistent state
 
-### 🎨 **Design Studio**
+###  **Design Studio**
 - Interactive t-shirt preview with color variants
 - Drag-and-drop design positioning and scaling
 - Real-time profit calculator with cost breakdown
 - Automated vendor/printer selection engine
 
-### 📊 **Creator Dashboard**
+###  **Creator Dashboard**
 - Sales analytics and revenue metrics
 - Product performance tracking
 - Order management with status updates
 - Profit margin calculations
 
-### 🛒 **E-Commerce Features**
+###  **E-Commerce Features**
 - Product catalog with filtering and search
 - Shopping cart with quantity management
 - Secure checkout flow
 - Order history and tracking
 
-### 🤖 **Smart Automation**
+###  **Smart Automation**
 - Automated vendor/printer selection based on:
   - Profit optimization
   - Reliability scores
   - Capacity availability
   - Geographic regions
 
-## 🛠 Tech Stack
+##  Tech Stack
 
 - **Framework**: Next.js 16 with App Router
 - **Language**: TypeScript
@@ -51,7 +51,7 @@ A comprehensive print-on-demand (POD) t-shirt marketplace built with Next.js 16,
 - **Authentication**: Custom API-based (bcrypt)
 - **Deployment**: Vercel/Netlify ready
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 pod-app/
@@ -79,7 +79,7 @@ pod-app/
 └── .github/                  # GitHub configurations
 ```
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -128,7 +128,7 @@ pod-app/
 
    Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-## 📊 Database Schema
+##  Database Schema
 
 ### Core Models
 
@@ -150,7 +150,7 @@ Vendor (N) ──── (1) Order
 Printer (N) ──── (1) Order
 ```
 
-## 🎯 Usage
+##  Usage
 
 ### For Creators
 
@@ -175,7 +175,7 @@ Printer (N) ──── (1) Order
 - Order fulfillment tracking
 - Performance analytics
 
-## 🔧 Development
+##  Development
 
 ### Available Scripts
 
@@ -207,7 +207,7 @@ npm run test:watch
 npm run test:coverage
 ```
 
-## 🚀 Deployment
+##  Deployment
 
 ### Vercel (Recommended)
 
@@ -235,7 +235,7 @@ NEXTAUTH_SECRET=your-secret
 NEXTAUTH_URL=https://your-domain.com
 ```
 
-## 🤝 Contributing
+##  Contributing
 
 1. **Fork the repository**
 2. **Create a feature branch**
@@ -259,34 +259,6 @@ NEXTAUTH_URL=https://your-domain.com
 - Test your changes thoroughly
 - Update documentation as needed
 
-## 📈 Roadmap
 
-- [ ] Payment integration (Stripe)
-- [ ] Image upload for designs
-- [ ] Advanced analytics dashboard
-- [ ] Mobile app (React Native)
-- [ ] Multi-language support
-- [ ] Advanced filtering and search
-- [ ] Social features (likes, comments)
-- [ ] Inventory management
-- [ ] Email notifications
 
-## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- [Next.js](https://nextjs.org/) - The React framework
-- [Prisma](https://prisma.io/) - Database ORM
-- [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS
-- [Radix UI](https://radix-ui.com/) - Accessible components
-- [Vercel](https://vercel.com/) - Deployment platform
-
-## 📞 Support
-
-For support, email support@yeatee.com or join our Discord community.
-
----
-
-**Built with ❤️ for creators and customers worldwide**
