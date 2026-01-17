@@ -1,81 +1,129 @@
 "use client";
 
 import Link from "next/link";
-import { Search, Heart, ShoppingCart, User, Settings } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Search, Heart, ShoppingCart, Settings, LogOut, User as UserIcon, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { useCart } from "@/contexts/CartContext";
 import { useUser } from "@/contexts/UserContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { signOut } from "next-auth/react";
 
 export function Navbar() {
+  const router = useRouter();
   const { totalItems } = useCart();
-  const { currentUser, isCreator, isCustomer, switchRole } = useUser();
+  const { currentUser, isCreator, switchRole } = useUser();
 
   return (
-    <nav className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
+    <nav className="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-border/40 font-sans">
+      <div className="container mx-auto px-6 py-4">
+        <div className="flex items-center justify-between gap-8">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-white font-bold text-sm">T</span>
-            </div>
-            <span className="font-bold text-xl">TeeStore</span>
+          <Link href="/" className="flex-shrink-0 group">
+            <h1 className="text-3xl font-bold tracking-tighter text-primary group-hover:opacity-90 transition-opacity">
+              Yeatee<span className="text-foreground text-sm font-normal ml-1 tracking-wide uppercase">Studio</span>
+            </h1>
           </Link>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-md mx-8">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="search"
-                placeholder="Search tees..."
-                className="pl-10 pr-4"
-              />
-            </div>
+          {/* Search Bar - Minimal */}
+          <div className="hidden md:flex flex-1 max-w-xl relative group">
+            <input
+              type="text"
+              placeholder="Search designs, shops, or tags..."
+              className="w-full h-11 pl-12 pr-4 rounded-full bg-secondary/5 border-none focus:bg-white focus:ring-2 focus:ring-primary/20 transition-all font-medium placeholder:text-muted-foreground/70"
+            />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-focus-within:text-primary transition-colors" />
           </div>
 
-          {/* Right Icons */}
-          <div className="flex items-center space-x-4">
-            {currentUser && (
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-muted-foreground">
-                  {currentUser.name} ({currentUser.role})
-                </span>
-                <Button variant="outline" size="sm" onClick={switchRole}>
-                  Switch to {isCreator ? "Customer" : "Creator"}
-                </Button>
-              </div>
-            )}
-
-            <Button variant="ghost" size="sm">
-              <Heart className="h-4 w-4" />
+          {/* Right Navigation */}
+          <div className="flex items-center gap-3 flex-shrink-0">
+            {/* Search Toggle (Mobile) */}
+            <Button variant="ghost" size="icon" className="md:hidden rounded-full">
+              <Search className="h-5 w-5" />
             </Button>
 
+            {/* Role Switcher - Heroic Placement */}
+            {currentUser && (
+              <Button
+                variant={isCreator ? "default" : "outline"}
+                className={`hidden sm:flex rounded-full gap-2 transition-all ${isCreator ? 'bg-secondary hover:bg-secondary/90 text-white border-transparent' : 'border-primary/20 hover:border-primary text-foreground'}`}
+                onClick={() => {
+                  switchRole();
+                  if (!isCreator) {
+                    router.push("/dashboard/creator");
+                  }
+                }}
+              >
+                <RefreshCcw className={`h-4 w-4 ${isCreator ? 'animate-spin-once' : ''}`} />
+                <span>{isCreator ? "Creator Mode" : "Customer Mode"}</span>
+              </Button>
+            )}
+
+            {/* Favorites */}
+            <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent/10">
+              <Heart className="h-5 w-5" />
+            </Button>
+
+            {/* Cart */}
             <Link href="/cart">
-              <Button variant="ghost" size="sm" className="relative">
-                <ShoppingCart className="h-4 w-4" />
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent/10 relative">
+                <ShoppingCart className="h-5 w-5" />
                 {totalItems > 0 && (
-                  <Badge className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                  <span className="absolute -top-1 -right-1 h-5 w-5 bg-primary text-primary-foreground text-[10px] font-bold flex items-center justify-center rounded-full shadow-sm border border-white">
                     {totalItems}
-                  </Badge>
+                  </span>
                 )}
               </Button>
             </Link>
 
-            {isCreator && (
-              <Link href="/dashboard/creator">
-                <Button variant="ghost" size="sm">
-                  <Settings className="h-4 w-4" />
-                </Button>
-              </Link>
-            )}
+            {/* User Menu */}
+            {currentUser ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full ml-1 border border-border/50 bg-secondary/5">
+                    <UserIcon className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-64 p-2 rounded-2xl shadow-xl border-border/50 backdrop-blur-xl bg-white/95">
+                  <div className="px-2 py-3 mb-2 bg-secondary/10 rounded-xl">
+                    <p className="text-sm font-semibold">{currentUser?.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{currentUser?.email}</p>
+                  </div>
 
-            {isCustomer && (
-              <Link href="/dashboard/customer">
-                <Button variant="ghost" size="sm">
-                  <User className="h-4 w-4" />
+                  <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                    <Link href="/profile">Profile & Settings</Link>
+                  </DropdownMenuItem>
+
+                  {isCreator && (
+                    <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                      <Link href="/dashboard/creator">Creator Dashboard</Link>
+                    </DropdownMenuItem>
+                  )}
+
+                  {!isCreator && (
+                    <DropdownMenuItem asChild className="rounded-lg cursor-pointer">
+                      <Link href="/orders">My Orders</Link>
+                    </DropdownMenuItem>
+                  )}
+
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut({ callbackUrl: "/" })} className="text-destructive focus:text-destructive rounded-lg cursor-pointer">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login">
+                <Button className="rounded-full px-6 font-semibold">
+                  Sign in
                 </Button>
               </Link>
             )}
