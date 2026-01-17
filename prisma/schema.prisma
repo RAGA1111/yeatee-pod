@@ -3,172 +3,66 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
-enum UserRole {
-  CUSTOMER
-  CREATOR
-}
-
-enum TShirtType {
-  BASIC
-  PREMIUM
-}
-
-enum TShirtColor {
-  WHITE
-  BLACK
-  GRAY
-  NAVY
-  RED
-}
-
-enum OrderStatus {
-  PLACED
-  PRINTING
-  SHIPPED
-  DELIVERED
-  CANCELLED
+  provider = "sqlite"
+  url      = "file:./dev.db"
 }
 
 model User {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
-  email     String   @unique
-  password  String
-  role      UserRole @default(CUSTOMER)
-  image     String?
-  bio       String?
-  brand     Brand?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  products    Product[]
-  orders      Order[]
-  favorites   Favorite[]
-  cartItems   CartItem[]
-
-  @@map("users")
+  email     String    @unique
+  password  String    // Hashed password
+  designs   Design[]
+  products  Product[] // Products created by this user
+  orders    Order[]   // Orders placed by this user
 }
 
-model Brand {
-  id          String @id @default(uuid())
-  name        String
-  banner      String?
-  description String?
-  creatorId   String @unique
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  creator User @relation(fields: [creatorId], references: [id])
-
-  @@map("brands")
+model Design {
+  id        String    @id @default(uuid())
+  imageUrl  String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  products  Product[]
 }
 
 model Product {
   id          String   @id @default(uuid())
   title       String
-  designImage String
-  colors      TShirtColor[]
-  sellingPrice Float
+  designId    String
+  design      Design   @relation(fields: [designId], references: [id])
   creatorId   String
-  tshirtType  TShirtType @default(BASIC)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // Relations
-  creator     User        @relation(fields: [creatorId], references: [id])
+  creator     User     @relation(fields: [creatorId], references: [id])
+  size        String   // Fixed size for this product variant
+  color       String   // Fixed color for this product variant
+  price       Float    // Selling price
   orders      Order[]
-  favorites   Favorite[]
-  cartItems   CartItem[]
-
-  @@map("products")
 }
 
 model Vendor {
-  id             String   @id @default(uuid())
-  name           String
-  tshirtType     TShirtType
-  availableColors TShirtColor[]
-  baseCost       Float
-  dailyCapacity  Int
-  createdAt      DateTime @default(now())
-
-  // Relations
-  orders Order[]
-
-  @@map("vendors")
-}
-
-model Printer {
-  id               String   @id @default(uuid())
-  name             String
-  costPerPrint     Float
-  maxDailyPrints   Int
-  supportedColors  TShirtColor[]
-  reliabilityScore Float
-  createdAt        DateTime @default(now())
-
-  // Relations
-  orders Order[]
-
-  @@map("printers")
+  id        String   @id @default(uuid())
+  name      String
+  baseCost  Float    // Cost of the blank shirt
+  printCost Float    // Cost to print
+  orders    Order[]
 }
 
 model Order {
-  id          String      @id @default(uuid())
-  userId      String
+  id          String   @id @default(uuid())
+  userId      String   // Customer
+  user        User     @relation(fields: [userId], references: [id])
   productId   String
-  quantity    Int         @default(1)
-  vendorId    String?
-  printerId   String?
-  profit      Float?
-  status      OrderStatus @default(PLACED)
-  totalCost   Float
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  product     Product  @relation(fields: [productId], references: [id])
+  vendorId    String?  // Assigned automatically
+  vendor      Vendor?  @relation(fields: [vendorId], references: [id])
+  quantity    Int      @default(1)
+  
+  // Financials - Saved explicitly for transparency
+  baseCost    Float?   // Vendor base cost at time of order
+  printCost   Float?   // Vendor print cost at time of order
+  platformFee Float?   // My margin
+  totalCost   Float    // Total cost to fulfill
+  finalPrice  Float    // Price user paid
 
-  // Relations
-  user       User        @relation(fields: [userId], references: [id])
-  product    Product     @relation(fields: [productId], references: [id])
-  vendor     Vendor?     @relation(fields: [vendorId], references: [id])
-  printer    Printer?    @relation(fields: [printerId], references: [id])
-
-  @@map("orders")
-}
-
-model Favorite {
-  id        String @id @default(uuid())
-  userId    String
-  productId String
-  createdAt DateTime @default(now())
-
-  // Relations
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@unique([userId, productId])
-  @@map("favorites")
-}
-
-model CartItem {
-  id        String  @id @default(uuid())
-  userId    String
-  productId String
-  color     TShirtColor
-  quantity  Int     @default(1)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // Relations
-  user    User    @relation(fields: [userId], references: [id])
-  product Product @relation(fields: [productId], references: [id])
-
-  @@unique([userId, productId, color])
-  @@map("cart_items")
+  status      String   @default("PENDING")
+  createdAt   DateTime @default(now())
 }

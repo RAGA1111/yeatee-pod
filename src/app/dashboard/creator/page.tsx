@@ -1,16 +1,17 @@
 "use client";
 
-import { useMemo } from "react";
-import { TrendingUp, DollarSign, Package, BarChart3 } from "lucide-react";
+import { useMemo, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { TrendingUp, DollarSign, Package, BarChart3, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/Navbar";
 import { useUser } from "@/contexts/UserContext";
 import { products } from "@/lib/data";
 
 export default function CreatorDashboard() {
   const { currentUser } = useUser();
+  const router = useRouter();
 
   const creatorProducts = useMemo(() => {
     if (!currentUser) return [];
@@ -33,8 +34,18 @@ export default function CreatorDashboard() {
     };
   }, [creatorProducts]);
 
+  useEffect(() => {
+    if (!currentUser) {
+      router.push("/login?callbackUrl=/dashboard/creator");
+    }
+  }, [currentUser, router]);
+
   if (!currentUser) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (
@@ -176,7 +187,7 @@ export default function CreatorDashboard() {
                         <td className="py-2">
                           <Badge variant={
                             statuses[i % statuses.length] === "DELIVERED" ? "default" :
-                            statuses[i % statuses.length] === "PLACED" ? "secondary" : "outline"
+                              statuses[i % statuses.length] === "PLACED" ? "secondary" : "outline"
                           }>
                             {statuses[i % statuses.length]}
                           </Badge>

@@ -62,9 +62,8 @@ export default function ProductPage({ params }: ProductPageProps) {
                 <button
                   key={index}
                   onClick={() => setSelectedImageIndex(index)}
-                  className={`relative h-20 w-20 rounded-lg overflow-hidden border-2 ${
-                    selectedImageIndex === index ? "border-primary" : "border-gray-200"
-                  }`}
+                  className={`relative h-20 w-20 rounded-lg overflow-hidden border-2 ${selectedImageIndex === index ? "border-primary" : "border-gray-200"
+                    }`}
                 >
                   <Image
                     src={image}
@@ -93,7 +92,7 @@ export default function ProductPage({ params }: ProductPageProps) {
                   <Badge variant="secondary">Popular</Badge>
                 )}
               </div>
-              <p className="text-2xl font-bold text-gray-900">₹{product.sellingPrice}</p>
+              <p className="text-2xl font-bold text-gray-900">${product.sellingPrice}</p>
             </div>
 
             <div className="space-y-4">
@@ -111,9 +110,8 @@ export default function ProductPage({ params }: ProductPageProps) {
                 {product.colors.map((color) => (
                   <div
                     key={color}
-                    className={`w-8 h-8 rounded-full border-2 cursor-pointer ${
-                      selectedColor === color ? "border-primary" : "border-gray-300"
-                    }`}
+                    className={`w-8 h-8 rounded-full border-2 cursor-pointer ${selectedColor === color ? "border-primary" : "border-gray-300"
+                      }`}
                     style={{ backgroundColor: color.toLowerCase() }}
                     onClick={() => setSelectedColor(color)}
                   />
@@ -163,7 +161,7 @@ export default function ProductPage({ params }: ProductPageProps) {
               <div>
                 <h3 className="font-medium mb-2">Shipping & Returns</h3>
                 <p className="text-sm text-muted-foreground">
-                  Free shipping on orders over ₹999. Easy returns within 30 days.
+                  Free shipping on orders over $100. Easy returns within 30 days.
                 </p>
               </div>
               <div>

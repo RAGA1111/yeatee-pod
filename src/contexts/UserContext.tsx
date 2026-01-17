@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, ReactNode } from "react";
 import { User } from "@/lib/data";
+import { useSession } from "next-auth/react";
 
 interface UserContextType {
   currentUser: User | null;
@@ -13,20 +14,26 @@ interface UserContextType {
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-// Mock current user - in a real app this would come from authentication
-const mockCurrentUser: User = {
-  id: "creator1",
-  name: "Alex Designer",
-  email: "alex@example.com",
-  role: "CREATOR",
-  image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100",
-  bio: "Graphic designer specializing in minimalist art",
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
-};
-
 export function UserProvider({ children }: { children: ReactNode }) {
-  const [currentUser, setCurrentUser] = useState<User | null>(mockCurrentUser);
+  const { data: session } = useSession();
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+  React.useEffect(() => {
+    if (session?.user) {
+      setCurrentUser({
+        // @ts-ignore
+        id: session.user.id || "unknown",
+        name: session.user.name || "User",
+        email: session.user.email || "",
+        role: "CUSTOMER", // Default role
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        // Map other fields or fetch from DB if needed
+      });
+    } else {
+      setCurrentUser(null);
+    }
+  }, [session]);
 
   const isCreator = currentUser?.role === "CREATOR";
   const isCustomer = currentUser?.role === "CUSTOMER";
