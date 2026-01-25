@@ -83,4 +83,5 @@ npm run dev
 ---
 
 ## 📄 License
-Yeatee Studio is built for high-fidelity prototyping and demonstration. All rights reserved.
+Yeatee Studio is built for high-fidelity prototyping and demonstration. 
+All rights reserved.
